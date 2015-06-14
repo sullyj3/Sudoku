@@ -15,7 +15,7 @@ debug = print
 # 2,1
 # 2,2
 
-class grid(np.ndarray):
+class Grid(np.ndarray):
     def __new__(cls):
         ret = super().__new__(cls, buffer=None,shape=(9,9),dtype=int,order=None)
         ret.fill(0)
@@ -74,31 +74,13 @@ class grid(np.ndarray):
         col_contains     = lambda x: x in self.col(j)
         subgrid_contains = lambda x: x in self.subgrid_slice(subgrid)
 
-        # possible = lambda x: not (row_contains(x) or col_contains(x) or subgrid_contains(x))
-        # loop through current possible candidates for cell, removing
-        # impossible ones.
-        # TODO: current problem: when we remove a number, it fucks with the
-        # for loop.
-        # eg: for loop on 1 at index [0], 1 gets removed, 2 now at index [0]
-        # iteration moves on to 3 at index [1], skipping 2
-        msg = "self.possibilities[{}] = {}"
-        debug(msg.format(cell,self.possibilities[cell]))
-        for possibility in self.possibilities[cell]:
-            debug("checking {}".format(possibility))
-            if row_contains(possibility):
-                msg = "can't be {}, it's elsewhere in row {}"
-                debug(msg.format(possibility, i))
-                self.possibilities[cell].remove(possibility)
+        def possible(x):
+            return not (row_contains(x) or
+                        col_contains(x) or
+                        subgrid_contains(x))
 
-            elif col_contains(possibility):
-                msg = "can't be {}, it's elsewhere in col {}"
-                debug(msg.format(possibility, j))
-                self.possibilities[cell].remove(possibility)
-
-            elif subgrid_contains(possibility):
-                msg = "can't be {}, it's elsewhere in subgrid {},{}"
-                debug(msg.format(possibility, *subgrid))
-                self.possibilities[cell].remove(possibility)
+        p = (pos for pos in self.possibilities[cell] if possible(pos))
+        self.possibilities[cell] = list(p)
 
         # If there's only one possibility left, fill in the cell
         if len(self.possibilities[cell]) == 1:
@@ -111,46 +93,50 @@ class grid(np.ndarray):
         debug(msg.format(cell, self.possibilities[cell]))
         return False
 
-def create_test1():
-    g = grid()
-    g[0,6] = 5
-    g[1,0] = 3
-    g[1,2] = 2
-    g[1,4] = 7
-    g[1,6] = 9
-    g[1,7] = 1
-    g[2,0] = 6
-    g[2,3] = 9
-    g[3,7] = 2
-    g[3,8] = 6
-    g[4,1] = 2
-    g[4,3] = 3
-    g[4,6] = 1
-    g[4,7] = 5
-    g[4,8] = 9
-    g[5,0] = 7
-    g[5,1] = 9
-    g[5,3] = 6
-    g[5,5] = 5
-    g[5,7] = 8
-    g[6,0] = 1
-    g[6,2] = 9
-    g[6,3] = 7
-    g[7,0] = 4
-    g[7,1] = 5
-    g[7,6] = 2
-    g[7,7] = 3
-    g[8,1] = 3
-    g[8,2] = 8
-    g[8,3] = 4
-    g[8,4] = 5
-    g[8,6] = 6
+    def filter_all(self):
+        '''dumb and slow'''
+        cells = ((i,j) for j in range(9) for i in range(9))
+        empty_cells = (cell for cell in cells if not self[cell])
+        for cell in empty_cells:
+            self.filter_possible(cell)
+
+    def solved(self):
+        cells = ((i,j) for j in range(9) for i in range(9))
+        for cell in cells:
+            if not self[cell]:
+                return False
+        return True
+
+    def naive_solve(self):
+        '''seriously problematic, temporary measure. Slow, and potential for
+        infinite loops. Use with caution.'''
+        while not self.solved():
+            self.filter_all()
+
+    def dumps(self):
+        fmt_s = "{}" * 9
+        for row in self:
+            print(fmt_s.format(*row))
+
+def new_grid(l):
+    '''takes a list of 9 strings, of 9 numbers. Assumes they're well formed'''
+    assert len(l) == 9
+    g = Grid()
+    for i,row in enumerate(l):
+        for j,char in enumerate(row):
+            g[i,j] = int(char)
     return g
 
+def grid_from_file(f):
+    lines = f.read().splitlines()
+    g = new_grid(lines)
+    return g
+
+def test1():
+    with open('grids/test1.txt') as f:
+        t1 = grid_from_file(f)
+    t1.print_grid()
+    t1.dumps()
+
 if __name__ == '__main__':
-    t1 = create_test1()
-    t1.print_grid()
-    t1.filter_possible((4,0))
-    t1.print_grid()
-
-
+    test1()
