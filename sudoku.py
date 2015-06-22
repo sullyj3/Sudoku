@@ -271,7 +271,7 @@ class Grid(np.ndarray):
             print(fmt_s.format(*row))
 
 def new_grid(l):
-    '''takes a list of 9 strings, of 9 numbers. Assumes they're well formed'''
+    '''takes a list of 9 strings, of 9 numbers each. Assumes they're well formed'''
     assert len(l) == 9
     g = Grid()
     for i,row in enumerate(l):
@@ -295,10 +295,12 @@ def test1():
 def naive_solve(lines):
     g = new_grid(lines)
     g.naive_solve()
+    return g
 
 def naive_solve2(lines):
     g = new_grid(lines)
     g.naive_solve2()
+    return g
 
 def speedtest():
     with open('grids/test1.txt') as f:
