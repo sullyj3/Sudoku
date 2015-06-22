@@ -195,6 +195,19 @@ class Grid(np.ndarray):
             return True
         return False
 
+    ''' HOW SOLVING WORKS:
+        For each cell in the grid, we keep a record of which numbers could
+        possibly occupy that particular cell. We deduce this gradually by
+        checking cells in the same row, col, and subgrid. Once there is only
+        one possible value for a cell left, the cell is set to that value,
+        and the possibility list of all related cells are updated
+        accordingly.
+
+        This method is still incomplete, as it ignores other possible rules
+        of inference, and does not solve all solvable  grids.
+        this is a TODO
+    '''
+
     def naive_solve(self):
         '''seriously problematic, temporary measure. Very slow, won't solve
         every solvable puzzle, and can cause infinite loops. Use with caution.
@@ -210,13 +223,15 @@ class Grid(np.ndarray):
             self.filter_all2()
 
     def solve_v1(self):
+        '''WARNING INFINITE LOOPS'''
         while not self.solved():
             oneleft = self.filter_each(self.emptys())
             self.set_each(oneleft)
 
     def setval(self, cell, n):
         '''sets cell value to n, as well as updating possibility of n in all
-        nearby cells. returns list of cells with only one possibility left'''
+        nearby cells. returns list of cells with only one possibility left
+        for caller to deal with'''
         global setcount
         setcount += 1
         # set cell to n
