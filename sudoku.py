@@ -232,8 +232,6 @@ class Grid(np.ndarray):
         '''sets cell value to n, as well as updating possibility of n in all
         nearby cells. returns list of cells with only one possibility left
         for caller to deal with'''
-        global setcount
-        setcount += 1
         # set cell to n
         self[cell] = n
         i,j = cell
@@ -346,10 +344,7 @@ def solvev1_speedtest():
     print("done")
 
 if __name__ == '__main__':
-    setcount = 0
     test_solve_v1()
-    print(setcount)
-    # solvev1_speedtest()
 
 # if __name__ == '__main__':
 #     l = get_lines_from_file('grids/test1.txt')
