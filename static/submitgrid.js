@@ -2,6 +2,8 @@
 
 // Serialise user input sudoku grid and send it off to a flask server somehow.
 // TODO: Look up http POST. that sounds promising.
+// Currently limited by lack of knowledge of HTTP and web tech.
+// Will research more
 
 function submitGrid() {
 	var grid = [];
@@ -33,4 +35,5 @@ function submitGrid() {
 	//debug
 	window.alert(gridtext);
 	// holy shit, it worked first try! I'm a genius!
+	// TODO:POST request here, I assume.
 }
