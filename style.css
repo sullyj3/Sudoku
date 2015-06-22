@@ -1,0 +1,32 @@
+/*debugging*/
+/*
+* {
+   outline: 1px solid red !important;
+}
+*/
+
+h1 {
+	margin:40px auto;
+	text-align: center;
+	color:#444;
+	
+}
+
+form {
+	max-width: 400px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.grid {
+}
+
+.row {
+	padding-bottom: 2px;
+}
+
+.cell {
+	display: inline;
+	/* filthy hack, but I don't know css yet */
+	max-width: 36px;
+}
